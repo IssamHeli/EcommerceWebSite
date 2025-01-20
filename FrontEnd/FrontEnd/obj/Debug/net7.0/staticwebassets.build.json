@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "Hash": "wpTjMpO6anY39/EGB5ilYcFQ5I66ay0K8DZsRPYykTs=",
+  "Source": "FrontEnd",
+  "BasePath": "_content/FrontEnd",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "FrontEnd/wwwroot",
+      "Source": "FrontEnd",
+      "ContentRoot": "/Users/macgr/Desktop/EcommerceWebSite/FrontEnd/FrontEnd/wwwroot/",
+      "BasePath": "_content/FrontEnd",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "/Users/macgr/Desktop/EcommerceWebSite/FrontEnd/FrontEnd/wwwroot/css/site.css",
+      "SourceId": "FrontEnd",
+      "SourceType": "Discovered",
+      "ContentRoot": "/Users/macgr/Desktop/EcommerceWebSite/FrontEnd/FrontEnd/wwwroot/",
+      "BasePath": "_content/FrontEnd",
+      "RelativePath": "css/site.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/css/site.css"
+    }
+  ]
+}

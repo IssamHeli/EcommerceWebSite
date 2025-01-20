@@ -1,0 +1,43 @@
+﻿<Properties StartupConfiguration="{64EAB8F4-6A57-4F74-AC3E-9169F17C9FDE}|https">
+  <MonoDevelop.Ide.Workbench ActiveDocument="FrontEnd/wwwroot/css/site.css">
+    <Files>
+      <File FileName="FrontEnd/Footer.razor" />
+      <File FileName="FrontEnd/Navbar.razor" Line="29" Column="1" />
+      <File FileName="FrontEnd/Pages/Products.razor" Line="115" Column="19" />
+      <File FileName="FrontEnd/Pages/ProductsPage.razor" Line="67" Column="23" />
+      <File FileName="FrontEnd/Pages/_Host.cshtml" Line="32" Column="72" />
+      <File FileName="FrontEnd/MainLayout.razor" Line="14" Column="18" />
+      <File FileName="FrontEnd/Pages/Login.razor" Line="3" Column="42" />
+      <File FileName="FrontEnd/Program.cs" Line="13" Column="54" />
+      <File FileName="FrontEnd/Pages/admin/Dashboard.razor" Line="54" Column="7" />
+      <File FileName="FrontEnd/Pages/Index.razor" Line="3" Column="1" />
+      <File FileName="FrontEnd/Pages/admin/ProductTable.razor" Line="284" Column="41" />
+      <File FileName="FrontEnd/Pages/admin/Orders.razor" Line="70" Column="72" />
+      <File FileName="FrontEnd/App.razor" Line="1" Column="1" />
+      <File FileName="FrontEnd/wwwroot/css/site.css" Line="69" Column="36" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="FrontEnd" expanded="True">
+            <Node name="FrontEnd" expanded="True">
+              <Node name="Pages" expanded="True" />
+              <Node name="wwwroot" expanded="True">
+                <Node name="css" expanded="True">
+                  <Node name="site.css" selected="True" />
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.FrontEnd PreferredExecutionTarget="/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

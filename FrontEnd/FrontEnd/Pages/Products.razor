@@ -1,0 +1,245 @@
+﻿@page "/products"
+
+@inject HttpClient HttpClient
+<div class="container">
+
+    <div class="accordion" id="productAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Filter Products Options
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#productAccordion">
+                <div class="accordion-body">
+                    <form @onsubmit="FilterProducts" class="row g-3">
+                        <!-- Search Input -->
+                        <div class="col-md-3">
+                            <label for="search" class="form-label">Search</label>
+                            <input type="text" class="form-control" id="search" @bind="search" placeholder="Search by name" />
+                        </div>
+
+                        <!-- Category Dropdown -->
+                        <div class="col-md-3">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-control" id="category" @bind="category">
+                                <option value="">Select Category</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Watches">Watches</option>
+                                <option value="Phones">Phones</option>
+                                <!-- Add more categories as needed -->
+                            </select>
+                        </div>
+
+                        <!-- Min Price -->
+                        <div class="col-md-2">
+                            <label for="minPrice" class="form-label">Min Price</label>
+                            <input type="number" class="form-control" id="minPrice" @bind="minPrice" placeholder="Min Price" />
+                        </div>
+
+                        <!-- Max Price -->
+                        <div class="col-md-2">
+                            <label for="maxPrice" class="form-label">Max Price</label>
+                            <input type="number" class="form-control" id="maxPrice" @bind="maxPrice" placeholder="Max Price" />
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary m-2 ">Apply </button>
+                            <button class="btn btn-primary m-2" @onclick="ResetForm">Reset </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <br />
+
+
+    @if (productResponse != null)
+    {
+        @if (productResponse.Products != null)
+        {
+            <nav>
+                <ul class="pagination justify-content-end">
+                    <!-- Previous Page -->
+                    <li class="page-item @(productResponse.CurrentPage == 1 ? "disabled" : "")">
+                        <button class="page-link" @onclick="() => LoadProductsPage(productResponse.CurrentPage - 1)">Previous</button>
+                    </li>
+
+                    <!-- Page Numbers -->
+                    @for (int i = 1; i <= productResponse.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == productResponse.CurrentPage ? "active" : "")">
+                            <button class="page-link" @onclick="() => LoadProductsPage(i)">@i</button>
+                        </li>
+                    }
+
+                    <!-- Next Page -->
+                    <li class="page-item @(productResponse.CurrentPage == productResponse.TotalPages ? "disabled" : "")">
+                        <button class="page-link" @onclick="() => LoadProductsPage(productResponse.CurrentPage + 1)">Next</button>
+                    </li>
+                </ul>
+            </nav>
+            <div class="row">
+                @foreach (var product in productResponse.Products)
+                {
+                    <div class="col-md-4 col-sm-6 col-12 mb-4">
+                        <div class="card product-card shadow-sm">
+                            <img src="@product.ImageUrl" class="img-fluid card-img-top" alt="@product.Name" />
+                            <div class="card-body">
+                                <h5 class="card-title">@product.Name</h5>
+
+                                @if (product.Description.Length > 80)
+                                {
+                                    <p class="card-text text-muted">
+                                        @product.Description.Substring(0, 200) ...
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="card-text text-muted">
+                                        @product.Description
+                                    </p>
+                                }
+
+                                <p class="card-text text-success">@product.Price.ToString() Dh</p>
+                                <a class="btn btn-primary" href="product/@product.Id">Read more</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <nav>
+                <ul class="pagination justify-content-end">
+                    <!-- Previous Page -->
+                    <li class="page-item @(productResponse.CurrentPage == 1 ? "disabled" : "")">
+                        <button class="page-link" @onclick="() => LoadProductsPage(productResponse.CurrentPage - 1)">Previous</button>
+                    </li>
+
+                    <!-- Page Numbers -->
+                    @for (int i = 1; i <= productResponse.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == productResponse.CurrentPage ? "active" : "")">
+                            <button class="page-link" @onclick="() => LoadProductsPage(i)">@i</button>
+                        </li>
+                    }
+
+                    <!-- Next Page -->
+                    <li class="page-item @(productResponse.CurrentPage == productResponse.TotalPages ? "disabled" : "")">
+                        <button class="page-link" @onclick="() => LoadProductsPage(productResponse.CurrentPage + 1)">Next</button>
+                    </li>
+                </ul>
+            </nav>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                        <span class="visually-hidden">If this take too long try to refresh the page , or return later </span>
+                    </div>
+                </div>
+            </div>
+
+        }
+    }
+    else
+    {
+        <div class="alert alert-info"> No Product Found </div>
+    }
+</div>
+
+@code {
+    private ProductResponse? productResponse;
+
+    private string search = string.Empty;
+    private string category = string.Empty;
+    private decimal? minPrice;
+    private decimal? maxPrice;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Initially load the first page of products
+        await LoadProductsPage(1);
+    }
+
+    private async Task LoadProductsPage(int pageNumber)
+    {
+        var response = await HttpClient.GetFromJsonAsync<ProductResponse>($"products?page={pageNumber}");
+        if (response != null)
+        {
+            productResponse = response;
+            StateHasChanged();
+        }
+        else
+        {
+            productResponse = null;
+            productResponse.Products = null;
+            StateHasChanged();
+        }
+
+
+    }
+
+    private async Task FilterProducts()
+    {
+        var response = await HttpClient.GetFromJsonAsync<ProductResponse>($"products?page=1&pageSize=10&search={search}&category={category}&minPrice={minPrice}&maxPrice={maxPrice}");
+        if (response != null)
+        {
+            productResponse = response;
+            StateHasChanged();
+        }
+        else
+        {
+            productResponse = null;
+            StateHasChanged();
+        }
+
+    }
+
+
+    private async Task LoadNextPage()
+    {
+        if (productResponse.CurrentPage < productResponse.TotalPages)
+        {
+            await LoadProductsPage(productResponse.CurrentPage + 1);
+        }
+    }
+
+    private async void ResetForm()
+    {
+        search = string.Empty;
+        category = string.Empty;
+        minPrice = null;
+        maxPrice = null;
+        await LoadProductsPage(1);
+
+    }
+
+
+    public class Producte
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public string? Category { get; set; }
+        public decimal? Price { get; set; }
+        public int? Stock { get; set; }
+        public string? ImageUrl { get; set; }
+    }
+
+    public class ProductResponse
+    {
+        public int TotalCount { get; set; }
+        public int TotalPages { get; set; }
+        public int CurrentPage { get; set; }
+        public int PageSize { get; set; }
+        public List<Producte>? Products { get; set; }
+    }
+
+}

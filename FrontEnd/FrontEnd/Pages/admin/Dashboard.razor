@@ -1,0 +1,103 @@
+﻿@page "/admin/dashboard"
+@inject HttpClient HttpClient
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
+@using Blazored.LocalStorage
+
+
+@* Sidebar and Header Layout *@
+<div class="container-fluid ">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 bg-dark text-white pb-20">
+            <h4 class="text-center">Admin Dashboard</h4>
+            <ul class="nav flex-column mt-3">
+                <li class="nav-item">
+                    <a class="nav-link text-white " style="cursor:pointer;" @onclick="() => SetSelectedSection(1)">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white cursor-pointer" style="cursor:pointer;" @onclick="() => SetSelectedSection(2)">Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white cursor-pointer" style="cursor:pointer;" @onclick="() => SetSelectedSection(3)">Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white cursor-pointer" style="cursor:pointer;" @onclick="Logout">Logout</a>
+                </li>
+            </ul>
+        </div>
+
+
+
+
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <div class="container mt-4">
+                <h3 class="mb-4">Welcome, Admin!</h3>
+
+                @* Display content based on the selected section *@
+                @if (selectedSection == "orders")
+                {
+                    <OrdersTable></OrdersTable>
+                }
+                else if (selectedSection == "products")
+                {
+                    <ProductTable></ProductTable>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<br />
+<br />
+@code {
+
+    private string selectedSection = "dashboard";
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Check if the authentication token exists in local storage
+            var authToken = await LocalStorage.GetItemAsStringAsync("authToken");
+
+            if (string.IsNullOrEmpty(authToken))
+            {
+                // Redirect to the login page if the token is not found
+                NavigationManager.NavigateTo("/admin/login");
+            }
+        }
+    }
+    private async void SetSelectedSection(int section)
+    {
+        if (section == 1)
+        {
+            selectedSection = "dashboard";
+        }
+        if (section == 2)
+        {
+            selectedSection = "orders";
+        }
+        if (section == 3)
+        {
+            selectedSection = "products";
+            StateHasChanged();
+        }
+    }
+
+    private async Task Logout()
+    {
+        // Remove the token from LocalStorage
+        await LocalStorage.RemoveItemAsync("authToken");
+
+        // Redirect to login page
+        NavigationManager.NavigateTo("/admin/login");
+    }
+
+
+
+
+}

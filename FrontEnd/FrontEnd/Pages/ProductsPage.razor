@@ -1,0 +1,208 @@
+﻿@page "/product/{id:int}"
+
+<div class="container py-5">
+    @if (product == null)
+    {
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <!-- Product Image Section -->
+            <div class="col-md-6">
+                <img src="@product.ImageUrl" class="img-fluid" alt="@product.Name" />
+            </div>
+
+            <!-- Product Details Section -->
+            <div class="col-md-6">
+                <h2>@product.Name</h2>
+                <p class="text-muted">@product.Category</p>
+                <p class="h4 text-success">@product.Price.ToString("C")</p>
+                <p>@product.Description</p>
+
+                <!-- Stock Status -->
+                <p><strong>Stock Available:</strong> @product.Stock units</p>
+
+                <!-- Add to Cart Button -->
+                @if (product.Stock < 1)
+                {
+                    <div class="alert alert-warning"> this product is Out off Stock </div>
+                }
+                else
+                {
+                    <div class="mt-4">
+                        <h5>Place an Order</h5>
+                        <form @onsubmit="PlaceOrder">
+                            <div class="mb-3">
+                                <label for="CustomerName" class="form-label">Name</label>
+                                <input id="CustomerName" class="form-control" @bind="CustomerName" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="CustomerEmail" class="form-label">Email</label>
+                                <input id="CustomerEmail" type="email" class="form-control" @bind="CustomerEmail" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="CustomerAddress" class="form-label">Address</label>
+                                <input id="CustomerAddress" class="form-control" @bind="CustomerAddress" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="CustomerPhone" class="form-label">Phone</label>
+                                <input id="CustomerPhone" type="number" class="form-control" @bind="CustomerPhone" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="Quantity" class="form-label">Quantity</label>
+                                <input id="Quantity" class="form-control" @bind="Quantity" />
+                            </div>
+                            <button type="submit" class="btn btn-success">Submit Order</button>
+                        </form>
+                    </div>
+                }
+                <br />
+                @if (!string.IsNullOrEmpty(orderplaced))
+                {
+                    <div class="alert alert-@orderplacecolor">
+
+                        <H3>@orderplaced</H3>
+                    </div>
+
+                }
+
+                <!-- Order Form -->
+
+            </div>
+        </div>
+
+        <!-- Related Products Section -->
+        <div class="mt-5">
+            <h4>Related Products</h4>
+            <div class="row">
+                <!-- You can add related products here -->
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="https://via.placeholder.com/150" class="card-img-top" alt="Product Name" />
+                        <div class="card-body">
+                            <h5 class="card-title">Product Name</h5>
+                            <p class="card-text">Short description of the product.</p>
+                            <p class="card-text text-success">$99.99</p>
+                            <button class="btn btn-primary">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@code {
+
+    [Parameter]
+    public int id { get; set; }
+
+    private Productpage? product;
+    string? CustomerName;
+    string? CustomerEmail;
+    string? CustomerAddress;
+    int? CustomerPhone;
+    string? Status;
+    string orderplacecolor = "danger" ;
+    int Quantity;
+
+    string orderplaced = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        HttpClient http = new HttpClient();
+        // Fetch product details based on the product ID
+        product = await http.GetFromJsonAsync<Productpage>($"http://localhost:5257/api/products/{id}");
+    }
+
+    public bool ValidateCustomerData()
+    {
+        if (string.IsNullOrEmpty(CustomerName))
+        {
+            return false;
+        }
+
+        if (string.IsNullOrEmpty(CustomerEmail))
+        {
+            return false;
+        }
+
+        if (string.IsNullOrEmpty(CustomerAddress))
+        {
+            return false;
+        }
+
+        if (CustomerPhone == null || CustomerPhone == 0)
+        {
+            Console.WriteLine("Customer phone is required.");
+            return false;
+        }
+
+        return true;
+    }
+
+    public void PlaceOrder()
+    {
+        if (ValidateCustomerData())
+        {
+            Orderdto order = new Orderdto
+            {
+                CustomerName = CustomerName,
+                CustomerEmail = CustomerEmail,
+                CustomerAddress = CustomerAddress,
+                CustomerPhone = CustomerPhone.ToString(),
+                OrderDate = DateTime.UtcNow,
+                Status = "Pending",
+                ProductId = id,
+                Quantity = Quantity
+            };
+            HttpClient http = new HttpClient();
+            var response = http.PostAsJsonAsync("http://localhost:5257/api/orders", order).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                orderplacecolor = "success";
+                orderplaced = "Order placed successfully!";
+            }
+            else
+            {
+                orderplaced ="Samting went wrong , please try again ";
+            }
+            StateHasChanged();
+        }
+
+        orderplaced = "all the fields are requered ";
+
+    }
+    public class Productpage
+    {
+        public int Id { get; set; } // Primary Key
+        public string Name { get; set; } = string.Empty; // Product name
+        public string Description { get; set; } = string.Empty; // Product description
+        public string Category { get; set; } = string.Empty; // Product description
+        public decimal Price { get; set; } // Price of the product
+        public int Stock { get; set; } // Quantity available
+        public string ImageUrl { get; set; } = string.Empty; // URL to the product image
+    }
+
+
+    public class Orderdto
+    {
+        public int Id { get; set; } // Primary Key
+        public string CustomerName { get; set; } = string.Empty; // Customer's name
+        public string CustomerEmail { get; set; } = string.Empty; // Email for contact
+        public string CustomerAddress { get; set; } = string.Empty; // Delivery address
+        public string CustomerPhone { get; set; } = string.Empty; // Phone number for contact
+        public DateTime OrderDate { get; set; } = DateTime.UtcNow; // Order placement date
+        public string Status { get; set; } = "Pending"; // Order status ("Pending", "Delivered", "Confirmed")
+
+        public int ProductId { get; set; } // Foreign Key to Product
+        public int Quantity { get; set; } // Total order amount
+    }
+}
