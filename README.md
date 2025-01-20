@@ -7,14 +7,13 @@ This is a feature-rich e-commerce web application built using modern technologie
 ## Features
 
 - **Responsive Design**: Mobile-friendly interface for seamless user experience across devices.
-- 
 - **JWT Authentication**: Admin login with secure token-based authentication.
 - **Admin Dashboard**: Manage products, categories, and orders through a secure admin panel.
 - **Product Listing**: Filter products by category, search by name, and sort by price.
 - **Pagination**: Load products efficiently with pagination.
 - **Cash-on-Delivery**: Simple checkout process without user authentication.
 
-Coming soon (- **Dynamic Sections on Homepage**:
+- Coming soon (- **Dynamic Sections on Homepage**:
   - Best Sellers
   - Products by Category
   - Recommended Products
@@ -40,7 +39,6 @@ Coming soon (- **Dynamic Sections on Homepage**:
 ### Hosting & Tools
 - **GitHub**: Version control and code collaboration.
 - **Visual Studio & Visual Studio Code**: IDEs for development.
-- 
-Coming Soon (- **Azure Portal**: For deploying and hosting the application.)
+- Coming Soon (- **Azure Portal**: For deploying and hosting the application.)
 
 ---
