@@ -53,6 +53,8 @@ This is a feature-rich e-commerce web application built using modern technologie
 ### Orders with Actions
 ![Orders with Actions](screenshots/orderswithactions.png)
 
+### ProductPage (Customer View)
+![ProductPage](screenshots/productpage.png)
 
 ### Homepage
 ![Homepage](screenshots/home.png)
