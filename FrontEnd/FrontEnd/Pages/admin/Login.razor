@@ -1,0 +1,83 @@
+﻿@page "/admin/login"
+@inject HttpClient HttpClient
+@inject ILocalStorageService LocalStorage
+@using Blazored.LocalStorage
+@inject NavigationManager NavigationManager
+
+<form @onsubmit="HandleLogin" class="container col-md-4 mt-4 border p-4 rounded shadow">
+    <div class="form-group">
+        <label for="Username">Username</label>
+        <input id="Username" @bind="Username" class="form-control" placeholder="Enter your Username" required />
+    </div>
+
+    <div class="form-group mt-3">
+        <label for="password">Password</label>
+        <input id="password" @bind="Password" type="password" class="form-control" placeholder="Enter your password" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block mt-4">Login</button>
+</form>
+
+@if (errorMessage != null)
+{
+    <p class="text-danger text-center mt-3">@errorMessage</p>
+}
+
+@code {
+    private string? errorMessage;
+    private string? Username;
+    private string? Password;
+    private bool isLoggedIn = false;
+
+    private async Task HandleLogin()
+    {
+        errorMessage = null; // Reset error message
+
+        try
+        {
+            var loginModel = new LoginModel { username = Username, password = Password };
+
+            // Send login request to the API
+            var response = await HttpClient.PostAsJsonAsync("admin/login", loginModel);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Read the JWT token from the response
+                var authResponse = await response.Content.ReadFromJsonAsync<AuthResponse>();
+
+                if (authResponse?.Token != null)
+                {
+                    // Store the token securely using LocalStorage
+                    await LocalStorage.SetItemAsync("authToken", authResponse.Token);
+
+                    // Set logged-in state
+                    NavigationManager.NavigateTo("/admin/dashboard");
+                }
+                else
+                {
+                    errorMessage = "Failed to receive a token.";
+                }
+            }
+            else
+            {
+                errorMessage = "Invalid Username or password";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "An error occurred during login: " + ex.Message;
+        }
+    }
+
+
+    private class AuthResponse
+    {
+        public string? Token { get; set; }
+    }
+
+    private class LoginModel
+    {
+        public string? username { get; set; }
+        public string? password { get; set; }
+    }
+}
