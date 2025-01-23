@@ -145,6 +145,46 @@ public class OrdersController : ControllerBase
         return Ok(new { message = "Order status updated successfully.", order });
     }
 
+    [HttpGet("getanalyse")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> getanalyse(int id)
+    {
+        var Confirmed =  new List<Order>();
+        var Delivered = new List<Order>();
+        var Return = new List<Order>();
+        var orders = await _context.Orders.ToListAsync();
+        var totalorders = orders.Count();
+
+        foreach (var order in orders)
+        {
+            if(order.Status == "Confirmed")
+            {
+                Confirmed.Add(order);
+            }
+            else if(order.Status == "Delivered")
+            {
+                Delivered.Add(order);
+            }
+            else if(order.Status == "Return")
+            {
+                Return.Add(order);
+            }
+        }
+
+        decimal ConfirmedPercentage = (Confirmed.Count()  * 100) / totalorders;
+        decimal DeliveredPercentage = (Delivered.Count()  * 100) / totalorders;
+        decimal ReturnPercentage = (Return.Count()  * 100) / totalorders;
+
+        var analyses = new ordersanalyses
+        {
+            totalorders = totalorders,
+            ConfirmedPercentage = ConfirmedPercentage,
+            DeliveredPercentage = DeliveredPercentage,
+            ReturnPercentage = ReturnPercentage
+        };
+        return Ok(analyses);
+
+    }
 
 
 }
@@ -161,7 +201,7 @@ public class OrderDto
 
     public int Id { get; set; } // Primary Key
     public string CustomerName { get; set; } = string.Empty;
-    public string CustomerEmail { get; set; } = string.Empty;
+    public string? CustomerEmail { get; set; } = string.Empty;
     public string CustomerAddress { get; set; } = string.Empty;
     public string CustomerPhone { get; set; } = string.Empty;
     public DateTime OrderDate { get; set; } = DateTime.UtcNow; 
@@ -169,3 +209,11 @@ public class OrderDto
     public int ProductId { get; set; }
     public int Quantity { get; set; }
 }
+public class ordersanalyses
+{
+    public int totalorders { get; set; }
+    public decimal ConfirmedPercentage { get; set; }
+    public decimal DeliveredPercentage { get; set; }
+    public decimal ReturnPercentage { get; set; }
+}
+

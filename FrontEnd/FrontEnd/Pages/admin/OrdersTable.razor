@@ -49,7 +49,7 @@ else if (ordersWithProductInfoList?.Count > 0)
                             }
                         </td>
 
-                        <td>@item.product?.Name ?? "Product Not Available"</td>
+                        <td>@item.product?.Name </td>
                         <td>@item.product?.Price <strong>DH</strong></td>
 
                         <td>@item.order?.Quantity</td>
@@ -67,9 +67,9 @@ else if (ordersWithProductInfoList?.Count > 0)
 
                                 <!-- Dropdown Menu -->
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <li><a class="btn btn-primary mb-2 "() => MarkAsConfirmed(item.order.Id)">Confirmed</a></li>
-                                    <li><a class="btn btn-success mb-2 "() => MarkAsDelivered(item.order.Id)">Delivered</a></li>
-                                    <li><a class="btn btn-warning mb-2 "() => MarkAsReturn(item.order.Id)">Return</a></li>
+                                    <li><a class="btn btn-primary mb-2" @onclick="() => MarkAsConfirmed(item.order.Id)">Confirmed</a></li>
+                                    <li><a class="btn btn-success mb-2" @onclick="() => MarkAsDelivered(item.order.Id)">Delivered</a></li>
+                                    <li><a class="btn btn-warning mb-2" @onclick="() => MarkAsReturn(item.order.Id)">Return</a></li>
                                     <li><a class="btn btn-danger mb-2" @onclick="() => DeleteOrder(item.order.Id)">Delete Order</a></li>
                                 </ul>
                             </div>
@@ -115,6 +115,7 @@ else
     private string Errormessage = string.Empty;
     private int orderIdToDelete;
 
+    
 
     private async Task MarkAsConfirmed(int orderId)
     {
@@ -134,6 +135,15 @@ else
     {
         try
         {
+             var authToken = await LocalStorage.GetItemAsync<string>("authToken");
+
+            if (string.IsNullOrEmpty(authToken))
+            {
+                throw new UnauthorizedAccessException("No authorization token found. Please log in.");
+            }
+
+            // Add the token to the Authorization header
+            HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authToken);
             var response = await HttpClient.PutAsJsonAsync($"orders/{orderId}/status", status);
             if (response.IsSuccessStatusCode)
             {
@@ -169,6 +179,15 @@ else
     {
         try
         {
+             var authToken = await LocalStorage.GetItemAsync<string>("authToken");
+
+            if (string.IsNullOrEmpty(authToken))
+            {
+                throw new UnauthorizedAccessException("No authorization token found. Please log in.");
+            }
+
+            // Add the token to the Authorization header
+            HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authToken);
             var response = await HttpClient.DeleteAsync($"orders/{orderIdToDelete}");
 
             if (response.IsSuccessStatusCode)

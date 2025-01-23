@@ -1,0 +1,84 @@
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+@inject ILocalStorageService LocalStorage
+@using Blazored.LocalStorage
+@inject IJSRuntime JSRuntime
+
+<div class="container my-5">
+    <h3 class="text-center mb-4">Order Analytics</h3>
+    <div class="card shadow-sm text-center p-3">
+        <h5 class="fw-bold">Total Orders</h5>
+        <h3 class="text-primary">@OrdersAnalyses.totalorders</h3>
+    </div>
+    <br />
+    <div class="row g-4">
+        <!-- Total Orders -->
+
+        <div class="col-md-4  p-3">
+            <div class="card shadow-sm text-center alert  alert-primary">
+                <h5 class="fw-bold">Confirmed</h5>
+                <h3 >@OrdersAnalyses.ConfirmedPercentage %</h3>
+            </div>
+        </div>
+        <div class="col-md-4 p-3">
+            <div class="card shadow-sm text-center alert alert-success ">
+                <h5 class="fw-bold">Delivered </h5>
+                <h3 >@OrdersAnalyses.DeliveredPercentage %</h3>
+            </div>
+        </div>
+        <div class="col-md-4  p-3">
+            <div class="card shadow-sm text-center alert alert-danger">
+                <h5 class="fw-bold">Return </h5>
+                <h3 c>@OrdersAnalyses.ReturnPercentage %</h3>
+            </div>
+        </div>
+        <!-- Analytics Summary -->
+
+    </div>
+
+</div>
+
+
+@code {
+    private ordersanalyses OrdersAnalyses = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await GetOrdersAnalyses();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task GetOrdersAnalyses()
+    {
+        var authToken = await LocalStorage.GetItemAsync<string>("authToken");
+
+        if (string.IsNullOrEmpty(authToken))
+        {
+            NavigationManager.NavigateTo("/admin/login");
+        }
+
+        // Add the token to the Authorization header
+        HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authToken);
+        var response = await HttpClient.GetFromJsonAsync<ordersanalyses>("orders/getanalyse");
+        if (response != null)
+        {
+            OrdersAnalyses.totalorders = response.totalorders;
+            OrdersAnalyses.ConfirmedPercentage = response.ConfirmedPercentage;
+            OrdersAnalyses.DeliveredPercentage = response.DeliveredPercentage;
+            OrdersAnalyses.ReturnPercentage = response.ReturnPercentage;
+        }
+    }
+
+    public class ordersanalyses
+    {
+        public int totalorders { get; set; }
+        public decimal ConfirmedPercentage { get; set; }
+        public decimal DeliveredPercentage { get; set; }
+        public decimal ReturnPercentage { get; set; }
+    }
+}
+
+

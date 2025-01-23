@@ -560,3 +560,4 @@
 /Users/macgr/Desktop/EcommerceWebSite/EcommercApi/obj/Debug/net9.0/EcommercApi.pdb
 /Users/macgr/Desktop/EcommerceWebSite/EcommercApi/obj/Debug/net9.0/EcommercApi.genruntimeconfig.cache
 /Users/macgr/Desktop/EcommerceWebSite/EcommercApi/obj/Debug/net9.0/ref/EcommercApi.dll
+/Users/macgr/Desktop/EcommerceWebSite/EcommercApi/obj/Debug/net9.0/EcommercApi.sourcelink.json

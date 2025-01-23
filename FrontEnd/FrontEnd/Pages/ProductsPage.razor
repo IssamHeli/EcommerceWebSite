@@ -1,11 +1,14 @@
 ﻿@page "/product/{id:int}"
 
+@inject HttpClient HttpClient
+
+
 <div class="container py-5">
     @if (product == null)
     {
         <div class="d-flex justify-content-center">
             <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden">No Product Found </span>
             </div>
         </div>
     }
@@ -16,7 +19,6 @@
             <div class="col-md-6">
                 <img src="@product.ImageUrl" class="img-fluid" alt="@product.Name" />
             </div>
-
             <!-- Product Details Section -->
             <div class="col-md-6">
                 <h2>@product.Name</h2>
@@ -38,27 +40,35 @@
                         <h5>Place an Order</h5>
                         <form @onsubmit="PlaceOrder">
                             <div class="mb-3">
-                                <label for="CustomerName" class="form-label">Name</label>
-                                <input id="CustomerName" class="form-control" @bind="CustomerName" />
+                                <label for="CustomerName" class="form-label">Name*</label>
+                                <input id="CustomerName" class="form-control" @bind="Customername" />
                             </div>
 
                             <div class="mb-3">
                                 <label for="CustomerEmail" class="form-label">Email</label>
-                                <input id="CustomerEmail" type="email" class="form-control" @bind="CustomerEmail" />
+                                <input id="CustomerEmail" type="email" class="form-control" @bind="Customeremail" />
                             </div>
 
                             <div class="mb-3">
-                                <label for="CustomerAddress" class="form-label">Address</label>
-                                <input id="CustomerAddress" class="form-control" @bind="CustomerAddress" />
+                                <label for="CustomerAddress" class="form-label">Address*</label>
+                                <input id="CustomerAddress" class="form-control" @bind="Customeraddress" />
+                            </div>
+                            
+                            <div class="mb-3">
+
+                                <label for="CustomerAddress" class="form-label">CountryCode</label>
+                                <select id="CountryCode" class="form-select" @bind="SelectedCountryCode">
+                                    <OptionsTele></OptionsTele>
+                                </select>
                             </div>
                             <div class="mb-3">
-                                <label for="CustomerPhone" class="form-label">Phone</label>
-                                <input id="CustomerPhone" type="number" class="form-control" @bind="CustomerPhone" />
+                                <label for="CustomerPhone" class="form-label">Phone*</label>
+                                <input id="CustomerPhone"  class="form-control" @bind="Customerphone" />
                             </div>
 
                             <div class="mb-3">
-                                <label for="Quantity" class="form-label">Quantity</label>
-                                <input id="Quantity" class="form-control" @bind="Quantity" />
+                                <label for="Quantity" class="form-label">Quantity*</label>
+                                <input id="Quantity" class="form-control" @bind="quantity" />
                             </div>
                             <button type="submit" class="btn btn-success">Submit Order</button>
                         </form>
@@ -78,25 +88,46 @@
 
             </div>
         </div>
+            @if(relatedProductsVisible)
+            {
+                <h4>Related Products</h4>
+                <div class="row">
+                    <!-- You can add related products here -->
+                        @foreach (var relatedProduct in relatedProducts)
+                        {
+                        <div class="col-md-4 col-sm-6 col-12 mb-4">
+                            <div class="card product-card shadow-sm">
+                                <img src="@relatedProduct.ImageUrl" class="img-fluid card-img-top" alt="@product.Name" />
+                                <div class="card-body">
+                                    <h5 class="card-title">@relatedProduct.Name</h5>
 
-        <!-- Related Products Section -->
-        <div class="mt-5">
-            <h4>Related Products</h4>
-            <div class="row">
-                <!-- You can add related products here -->
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <img src="https://via.placeholder.com/150" class="card-img-top" alt="Product Name" />
-                        <div class="card-body">
-                            <h5 class="card-title">Product Name</h5>
-                            <p class="card-text">Short description of the product.</p>
-                            <p class="card-text text-success">$99.99</p>
-                            <button class="btn btn-primary">Add to Cart</button>
+                                    @if (relatedProduct.Description.Length >= 200)
+                                    {
+                                        <p class="card-text text-muted">
+                                            @relatedProduct.Description.Substring(0, 200) ...
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <p class="card-text text-muted">
+                                            @relatedProduct.Description
+                                        </p>
+                                    }
+
+                                    <p class="card-text text-success">@relatedProduct.Price.ToString() Dh</p>
+                                    <a class="btn btn-primary" href="product/@relatedProduct.Id">Read more</a>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        }
+                        
                 </div>
-            </div>
-        </div>
+
+            }else{
+                <div class="alert alert-warning">No related products found</div>
+            }
+        <!-- Related Products Section -->
+       
     }
 </div>
 @code {
@@ -104,44 +135,60 @@
     [Parameter]
     public int id { get; set; }
 
-    private Productpage? product;
-    string? CustomerName;
-    string? CustomerEmail;
-    string? CustomerAddress;
-    int? CustomerPhone;
+    private ProductDto? product;
+
+    private List<ProductDto> relatedProducts = new List<ProductDto>();
+
+    bool relatedProductsVisible = false;
+    string Customername;
+    string? Customeremail;
+    string Customeraddress;
+    int Customerphone;
     string? Status;
     string orderplacecolor = "danger" ;
-    int Quantity;
+    int quantity;
 
     string orderplaced = string.Empty;
 
+    string SelectedCountryCode = " ";
     protected override async Task OnInitializedAsync()
     {
-        HttpClient http = new HttpClient();
         // Fetch product details based on the product ID
-        product = await http.GetFromJsonAsync<Productpage>($"http://localhost:5257/api/products/{id}");
+        product = await HttpClient.GetFromJsonAsync<ProductDto>($"products/{id}");
+        var relatedproducts = await HttpClient.GetFromJsonAsync<List<ProductDto>>($"products/getproducts/{product.Category}/{product.Id}");
+        if (relatedproducts != null)
+        {
+            relatedProducts = relatedproducts;
+            relatedProductsVisible = true;
+        }
+        else
+        {
+            relatedProductsVisible = false;
+        }
+
     }
 
     public bool ValidateCustomerData()
     {
-        if (string.IsNullOrEmpty(CustomerName))
+        if (string.IsNullOrEmpty(Customername))
         {
+            orderplaced = "Name is required";
             return false;
         }
 
-        if (string.IsNullOrEmpty(CustomerEmail))
+        if (string.IsNullOrEmpty(Customeraddress))
         {
+            orderplaced = "Address is required";
             return false;
         }
-
-        if (string.IsNullOrEmpty(CustomerAddress))
-        {
+        if (quantity == 0)
+        {   
+            orderplaced = "Quantity is required";
             return false;
         }
-
-        if (CustomerPhone == null || CustomerPhone == 0)
+        if (Customerphone == 0)
         {
-            Console.WriteLine("Customer phone is required.");
+            orderplaced = "Phone is required";
             return false;
         }
 
@@ -154,33 +201,34 @@
         {
             Orderdto order = new Orderdto
             {
-                CustomerName = CustomerName,
-                CustomerEmail = CustomerEmail,
-                CustomerAddress = CustomerAddress,
-                CustomerPhone = CustomerPhone.ToString(),
+                CustomerName = Customername,
+                CustomerEmail = Customeremail,
+                CustomerAddress = Customeraddress,
+                CustomerPhone = SelectedCountryCode+Customerphone.ToString(),
                 OrderDate = DateTime.UtcNow,
                 Status = "Pending",
                 ProductId = id,
-                Quantity = Quantity
+                Quantity = quantity
             };
-            HttpClient http = new HttpClient();
-            var response = http.PostAsJsonAsync("http://localhost:5257/api/orders", order).Result;
+            var response = HttpClient.PostAsJsonAsync("orders", order).Result;
             if (response.IsSuccessStatusCode)
             {
                 orderplacecolor = "success";
                 orderplaced = "Order placed successfully!";
+                StateHasChanged();
+                return;
             }
             else
             {
                 orderplaced ="Samting went wrong , please try again ";
             }
-            StateHasChanged();
         }
 
         orderplaced = "all the fields are requered ";
 
+        StateHasChanged();
     }
-    public class Productpage
+    public class ProductDto
     {
         public int Id { get; set; } // Primary Key
         public string Name { get; set; } = string.Empty; // Product name
@@ -196,7 +244,7 @@
     {
         public int Id { get; set; } // Primary Key
         public string CustomerName { get; set; } = string.Empty; // Customer's name
-        public string CustomerEmail { get; set; } = string.Empty; // Email for contact
+        public string? CustomerEmail { get; set; } = string.Empty; // Email for contact
         public string CustomerAddress { get; set; } = string.Empty; // Delivery address
         public string CustomerPhone { get; set; } = string.Empty; // Phone number for contact
         public DateTime OrderDate { get; set; } = DateTime.UtcNow; // Order placement date
@@ -205,4 +253,5 @@
         public int ProductId { get; set; } // Foreign Key to Product
         public int Quantity { get; set; } // Total order amount
     }
+
 }

@@ -3,6 +3,9 @@
 @inject HttpClient HttpClient
 @inject IJSRuntime JSRuntime
 
+@inject ILocalStorageService LocalStorage
+@using Blazored.LocalStorage
+
 <div class="container">
     <div class="accordion" id="productAccordion">
         <div class="accordion-item">
@@ -62,7 +65,6 @@
         @if (productResponse.Products != null)
         {
 
-            <td><a class="btn btn-secondary">Create a product</a></td>
             <nav>
                 <ul class="pagination justify-content-end">
                     <!-- Previous Page -->
@@ -89,6 +91,7 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
+                            <th>image</th>
                             <th>Product Name</th>
                             <th>Description</th>
                             <th>Category</th>
@@ -100,6 +103,7 @@
                         @foreach (var product in productResponse.Products)
                         {
                             <tr>
+                                <td><img src="@product.ImageUrl" style="height: 50px;"/></td>
                                 <td>@product.Name</td>
                                 @if (product.Description.Length > 80)
                                 {
@@ -275,6 +279,15 @@
     {
         try
         {
+             var authToken = await LocalStorage.GetItemAsync<string>("authToken");
+
+            if (string.IsNullOrEmpty(authToken))
+            {
+                throw new UnauthorizedAccessException("No authorization token found. Please log in.");
+            }
+
+            // Add the token to the Authorization header
+            HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authToken);
             // Call the API to delete the product
             var response = await HttpClient.DeleteAsync($"products/{productIdToDelete}");
             if (response.IsSuccessStatusCode)

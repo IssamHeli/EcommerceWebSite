@@ -1,6 +1,10 @@
 {
   "Files": [
     {
+      "Id": "/Users/macgr/Desktop/EcommerceWebSite/FrontEnd/FrontEnd/wwwroot/css/Scripte.js",
+      "PackagePath": "staticwebassets/css/Scripte.js"
+    },
+    {
       "Id": "/Users/macgr/Desktop/EcommerceWebSite/FrontEnd/FrontEnd/wwwroot/css/site.css",
       "PackagePath": "staticwebassets/css/site.css"
     },

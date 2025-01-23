@@ -1,0 +1,101 @@
+
+@inject HttpClient HttpClient
+
+@inject ILocalStorageService LocalStorage
+@using Blazored.LocalStorage
+
+<div class="container my-5">
+    <h3 class="text-center mb-4">Create Product</h3>
+    <h1>@productadded</h1>
+    <form @onsubmit="HandleValidSubmit" >
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="name" class="form-label">Name</label>
+                <input id="name" type="text" class="form-control" @bind="name" placeholder="Enter product name" required>
+            </div>
+            <div class="col-md-6">
+                <label for="category" class="form-label">Category</label>
+                <input id="category" type="text" class="form-control" @bind="category" placeholder="Enter product category" required>
+            </div>
+            <div class="col-md-12">
+                <label for="description" class="form-label">Description</label>
+                <textarea id="description" class="form-control" @bind="description" placeholder="Enter product description" rows="10" required></textarea>
+            </div>
+            <div class="col-md-6">
+                <label for="price" class="form-label">Price</label>
+                <input id="price" type="number" class="form-control" @bind="price" placeholder="Enter price" required>
+            </div>
+            <div class="col-md-6">
+                <label for="stock" class="form-label">Stock</label>
+                <input id="stock" type="number" class="form-control" @bind="stock" placeholder="Enter stock quantity" required>
+            </div>
+            <div class="col-md-12">
+                <label for="imageUrl" class="form-label">Image URL</label>
+                <input id="imageUrl" type="text" class="form-control" @bind="imageUrl" placeholder="Enter image URL">
+            </div>
+        </div>
+        <div class="d-flex justify-content-end mt-4">
+            <button type="submit" class="btn btn-primary px-4">Create Product</button>
+        </div>
+    </form>
+</div>
+
+
+
+
+@code {
+    string name ;
+    string description ;
+    decimal price ;
+    string category ;
+    string imageUrl ;
+    int stock ;
+
+    string productadded="create product";
+
+    private async Task HandleValidSubmit()
+    {
+        var product = new Productdto
+        {
+            Name = name,
+            Description = description,
+            Price = decimal.Parse(price.ToString()),
+            Category = category,
+            ImageUrl = imageUrl,
+            Stock = stock
+        };
+        var authToken = await LocalStorage.GetItemAsync<string>("authToken");
+
+            if (string.IsNullOrEmpty(authToken))
+            {
+                productadded = "No authorization token found. Please log in.";
+            }
+
+            // Add the token to the Authorization header
+            HttpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authToken);
+
+        var response = await HttpClient.PostAsJsonAsync("products", product);
+        if (response.IsSuccessStatusCode)
+        {
+            productadded = "Product added successfully!";
+            // Handle success (e.g., navigate to product list)
+        }
+        else
+        {
+            productadded = "Something went wrong, please try again!";
+            // Handle error
+        }
+    }
+
+   
+public class Productdto
+{
+    public int Id { get; set; } // Primary Key
+    public string Name { get; set; } = string.Empty; // Product name
+    public string Description { get; set; } = string.Empty; // Product description
+    public string Category { get; set; } = string.Empty; // Product description
+    public decimal Price { get; set; } // Price of the product
+    public int Stock { get; set; } // Quantity available
+    public string ImageUrl { get; set; } = string.Empty; // URL to the product image
+}
+}

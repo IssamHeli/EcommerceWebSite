@@ -97,6 +97,22 @@ public class ProductsController : ControllerBase
         return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
     }
 
+
+
+    [HttpGet("getproducts/{categorie}/{productid}")]
+    public async Task<IActionResult> GetProduct(string categorie , int productid)
+    {
+        var products = await _context.Products
+            .Where(p => p.Category == categorie && p.Id != productid)
+            .Take(6)
+            .ToListAsync();
+        if (products == null || !products.Any())
+        {
+            return NotFound();
+        }
+        return Ok(products);
+    }
+
     [HttpPut("{id}")]
 
     [Authorize(Roles = "Admin")]
