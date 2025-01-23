@@ -1,36 +1,30 @@
 ﻿<Properties StartupConfiguration="{64EAB8F4-6A57-4F74-AC3E-9169F17C9FDE}|https">
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.ItemProperties.FrontEnd PreferredExecutionTarget="/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app" />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="FrontEnd/Pages/admin/Analyses.razor">
+  <MonoDevelop.Ide.ItemProperties.FrontEnd PreferredExecutionTarget="/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="FrontEnd/Pages/admin/Dashboard.razor">
     <Files>
       <File FileName="FrontEnd/Footer.razor" />
       <File FileName="FrontEnd/Navbar.razor" />
-      <File FileName="FrontEnd/Pages/Products.razor" Line="61" Column="1" />
-      <File FileName="FrontEnd/Pages/ProductsPage.razor" Line="96" Column="72" />
+      <File FileName="FrontEnd/Pages/Products.razor" />
+      <File FileName="FrontEnd/Pages/ProductsPage.razor" />
       <File FileName="FrontEnd/Pages/_Host.cshtml" />
       <File FileName="FrontEnd/MainLayout.razor" />
       <File FileName="FrontEnd/Program.cs" />
-      <File FileName="FrontEnd/Pages/admin/Dashboard.razor" />
-      <File FileName="FrontEnd/Pages/Index.razor" Line="8" Column="22" />
+      <File FileName="FrontEnd/Pages/admin/Dashboard.razor" Line="42" Column="41" />
+      <File FileName="FrontEnd/Pages/Index.razor" />
       <File FileName="FrontEnd/Pages/admin/ProductTable.razor" />
       <File FileName="FrontEnd/App.razor" />
       <File FileName="FrontEnd/wwwroot/css/site.css" />
-      <File FileName="FrontEnd/Pages/admin/Analyses.razor" Line="28" Column="1" />
+      <File FileName="FrontEnd/Pages/admin/Analyses.razor" Line="12" Column="11" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="FrontEnd" expanded="True">
-            <Node name="FrontEnd">
+            <Node name="FrontEnd" expanded="True">
               <Node name="Pages" expanded="True">
-                <Node name="admin" expanded="True">
-                  <Node name="Analyses.razor" selected="True" />
-                </Node>
+                <Node name="admin" expanded="True" />
               </Node>
               <Node name="wwwroot" expanded="True">
                 <Node name="css" expanded="True" />
@@ -41,4 +35,8 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
 </Properties>
