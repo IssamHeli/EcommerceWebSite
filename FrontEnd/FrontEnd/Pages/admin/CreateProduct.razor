@@ -52,7 +52,15 @@
     int stock ;
 
     string productadded="create product";
-
+    private void deleteform()
+    {
+        name = "";
+        description = "";
+        price = 0;
+        category = "";
+        imageUrl = "";
+        stock = 0;
+    }
     private async Task HandleValidSubmit()
     {
         var product = new Productdto
@@ -78,6 +86,8 @@
         if (response.IsSuccessStatusCode)
         {
             productadded = "Product added successfully!";
+            deleteform();
+            
             // Handle success (e.g., navigate to product list)
         }
         else

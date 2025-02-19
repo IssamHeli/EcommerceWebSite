@@ -13,25 +13,31 @@
     <br />
     <div class="row g-4">
         <!-- Total Orders -->
-
+         <div class="col-md-4  p-3">
+        <div class="card shadow-sm text-center alert alert-info">
+            <h5 class="fw-bold">Pending</h5>
+            <h3>@OrdersAnalyses.PendingPercentage.ToString("0.00") %</h3>
+        </div>
+        </div>
         <div class="col-md-4  p-3">
             <div class="card shadow-sm text-center alert  alert-primary">
                 <h5 class="fw-bold">Confirmed</h5>
-                <h3 >@OrdersAnalyses.ConfirmedPercentage %</h3>
+                <h3>@OrdersAnalyses.ConfirmedPercentage.ToString("0.00") %</h3>
             </div>
         </div>
         <div class="col-md-4 p-3">
-            <div class="card shadow-sm text-center alert alert-success ">
-                <h5 class="fw-bold">Delivered </h5>
-                <h3 >@OrdersAnalyses.DeliveredPercentage %</h3>
+            <div class="card shadow-sm text-center alert alert-success">
+                <h5 class="fw-bold">Delivered</h5>
+                <h3>@OrdersAnalyses.DeliveredPercentage.ToString("0.00") %</h3>
             </div>
         </div>
         <div class="col-md-4  p-3">
             <div class="card shadow-sm text-center alert alert-danger">
-                <h5 class="fw-bold">Return </h5>
-                <h3 c>@OrdersAnalyses.ReturnPercentage %</h3>
+                <h5 class="fw-bold">Return</h5>
+                <h3>@OrdersAnalyses.ReturnPercentage.ToString("0.00") %</h3>
             </div>
         </div>
+        
         <!-- Analytics Summary -->
 
     </div>
@@ -69,6 +75,7 @@
             OrdersAnalyses.ConfirmedPercentage = response.ConfirmedPercentage;
             OrdersAnalyses.DeliveredPercentage = response.DeliveredPercentage;
             OrdersAnalyses.ReturnPercentage = response.ReturnPercentage;
+            OrdersAnalyses.PendingPercentage = response.PendingPercentage;
         }
     }
 
@@ -78,6 +85,7 @@
         public decimal ConfirmedPercentage { get; set; }
         public decimal DeliveredPercentage { get; set; }
         public decimal ReturnPercentage { get; set; }
+        public decimal PendingPercentage { get; set; }
     }
 }
 

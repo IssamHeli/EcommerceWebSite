@@ -170,7 +170,7 @@
 
     private async Task LoadProductsPage(int pageNumber)
     {
-        var response = await HttpClient.GetFromJsonAsync<ProductResponse>($"products?page={pageNumber}");
+        var response = await HttpClient.GetFromJsonAsync<ProductResponse>($"products?page={pageNumber}&pageSize=9");
         if (response != null)
         {
             productResponse = response;
@@ -187,7 +187,7 @@
 
     private async Task FilterProducts()
     {
-        var response = await HttpClient.GetFromJsonAsync<ProductResponse>($"products?page=1&pageSize=10&search={search}&category={category}&minPrice={minPrice}&maxPrice={maxPrice}");
+        var response = await HttpClient.GetFromJsonAsync<ProductResponse>($"products?page=1&pageSize=9&search={search}&category={category}&minPrice={minPrice}&maxPrice={maxPrice}");
         if (response != null)
         {
             productResponse = response;
@@ -202,13 +202,6 @@
     }
 
 
-    private async Task LoadNextPage()
-    {
-        if (productResponse.CurrentPage < productResponse.TotalPages)
-        {
-            await LoadProductsPage(productResponse.CurrentPage + 1);
-        }
-    }
 
     private async void ResetForm()
     {
